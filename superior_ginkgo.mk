@@ -23,9 +23,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 # Inherit from ginkgo device
 $(call inherit-product, device/xiaomi/ginkgo/device.mk)
 
-# Inherit some common ArrowOS stuff
+# Inherit some common SuperiorOS stuff
 TARGET_BOOT_ANIMATION_RES := 1080
 $(call inherit-product, vendor/superior/config/common.mk)
+$(call inherit-product, vendor/miuicamera/common/common-vendor.mk)
 
 # Launcher
 TARGET_LAUNCHER := lawnchair
