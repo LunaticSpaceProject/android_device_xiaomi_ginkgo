@@ -112,7 +112,7 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
                 return true;
             default:
                 return false;
-           } else if (preference == mSelinuxMode) {
+           } if (preference == mSelinuxMode) {
               boolean enabled = (Boolean) newValue;
               new SwitchSelinuxTask(getActivity()).execute(enabled);
               setSelinuxEnabled(enabled, mSelinuxPersistence.isChecked());
