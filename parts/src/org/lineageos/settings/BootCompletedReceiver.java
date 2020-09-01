@@ -28,7 +28,6 @@ import android.widget.Toast;
 import java.util.List;
 
 import org.lineageos.settings.dirac.DiracUtils;
-import org.lineageos.settings.thermal.ThermalUtils;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
@@ -44,29 +43,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         if (DEBUG) Log.d(TAG, "Received boot completed intent");
         new DiracUtils(context).onBootCompleted();
         }
-        ThermalUtils.startService(context);
-
-        mContext = context;
-        ActivityManager activityManager =
-                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> procInfos =
-                activityManager.getRunningAppProcesses();
-        for(int i = 0; i < procInfos.size(); i++) {
-            if(procInfos.get(i).processName.equals("com.google.android.setupwizard")) {
-                mSetupRunning = true;
-            }
-        }
-
-        if (DEBUG) Log.d(TAG, "We are" + mSetupRunning + "running in setup");
-
-        if(!mSetupRunning) {
-            try {
-                settingsContext = context.createPackageContext("com.android.settings", 0);
-            } catch (Exception e) {
-                Log.e(TAG, "Package not found", e);
-            }
-            SharedPreferences sharedpreferences = context.getSharedPreferences("selinux_pref", Context.MODE_PRIVATE);
-
             if (DEBUG) Log.d(TAG, "sharedpreferences.contains(" + PREF_SELINUX_MODE + "): " + (sharedpreferences.contains(PREF_SELINUX_MODE) ? "True":"False"));
 
             if (sharedpreferences.contains(PREF_SELINUX_MODE)) {
