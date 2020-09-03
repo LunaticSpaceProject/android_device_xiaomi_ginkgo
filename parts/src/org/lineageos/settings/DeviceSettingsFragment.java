@@ -114,12 +114,12 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
 
             case PREF_SELINUX_MODE:
                 if (preference == mSelinuxMode) {
-		              boolean enabled = (Boolean) value;
+		              boolean enabled = (Boolean) newValue;
                   new SwitchSelinuxTask(getActivity()).execute(enabled);
                   setSelinuxEnabled(enabled, mSelinuxPersistence.isChecked());
                   return true;
                 } else if (preference == mSelinuxPersistence) {
-                  setSelinuxEnabled(mSelinuxMode.isChecked(), (Boolean) value);
+                  setSelinuxEnabled(mSelinuxMode.isChecked(), (Boolean) newValue);
                   return true;
                 }
 
