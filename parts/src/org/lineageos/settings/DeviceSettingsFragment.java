@@ -85,10 +85,12 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
             return true;
         });
         // SELinux
+        boolean isRooted = SuShell.detectValidSuInPath();
         Preference selinuxCategory = findPreference(SELINUX_CATEGORY);
         mSelinuxMode = (SwitchPreference) findPreference(PREF_SELINUX_MODE);
         mSelinuxMode.setChecked(SELinux.isSELinuxEnforced());
         mSelinuxMode.setOnPreferenceChangeListener(this);
+        mSelinuxMode.setEnabled(isRooted);
 
         mSelinuxPersistence =
         (SwitchPreference) findPreference(PREF_SELINUX_PERSISTENCE);
@@ -96,6 +98,7 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
         mSelinuxPersistence.setChecked(getContext()
         .getSharedPreferences("selinux_pref", Context.MODE_PRIVATE)
         .contains(PREF_SELINUX_MODE));
+        mSelinuxPersistence.setEnabled(isRooted);
     }
 
     @Override
@@ -111,22 +114,16 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
             case PREF_PRESET:
                 mDiracUtils.setLevel(String.valueOf(newValue));
                 return true;
-
-            case PREF_SELINUX_MODE:
-                if (preference == mSelinuxMode) {
-		              boolean enabled = (Boolean) newValue;
-                  new SwitchSelinuxTask(getActivity()).execute(enabled);
-                  setSelinuxEnabled(enabled, mSelinuxPersistence.isChecked());
-                  return true;
-                } else if (preference == mSelinuxPersistence) {
-                  setSelinuxEnabled(mSelinuxMode.isChecked(), (Boolean) newValue);
-                  return true;
-                }
-
-                break;
-
              default:
                 return false;
+            case PREF_SELINUX_MODE:
+             if (preference == mSelinuxMode) {
+              boolean enabled = (Boolean) newValue;
+              new SwitchSelinuxTask(getActivity()).execute(enabled);
+              setSelinuxEnabled(enabled, mSelinuxPersistence.isChecked());
+           } else if (preference == mSelinuxPersistence) {
+              setSelinuxEnabled(mSelinuxMode.isChecked(), (Boolean) newValue);
+           }
         }
     }
 
