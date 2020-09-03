@@ -134,41 +134,40 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
     }
 
     private void setSelinuxEnabled(boolean status, boolean persistent) {
-          SharedPreferences.Editor editor = getContext()
-              .getSharedPreferences("selinux_pref", Context.MODE_PRIVATE).edit();
-          if (persistent) {
-            editor.putBoolean(PREF_SELINUX_MODE, status);
-          } else {
-            editor.remove(PREF_SELINUX_MODE);
-          }
-          editor.apply();
-          mSelinuxMode.setChecked(status);
-        }
+      SharedPreferences.Editor editor = getContext()
+          .getSharedPreferences("selinux_pref", Context.MODE_PRIVATE).edit();
+      if (persistent) {
+        editor.putBoolean(PREF_SELINUX_MODE, status);
+      } else {
+        editor.remove(PREF_SELINUX_MODE);
+      }
+      editor.apply();
+      mSelinuxMode.setChecked(status);
+    }
 
-        private class SwitchSelinuxTask extends SuTask<Boolean> {
-          public SwitchSelinuxTask(Context context) {
-            super(context);
-          }
-          @Override
-          protected void sudoInBackground(Boolean... params) throws SuShell.SuDeniedException {
-            if (params.length != 1) {
-              Log.e(TAG, "SwitchSelinuxTask: invalid params count");
-              return;
-            }
-            if (params[0]) {
-              SuShell.runWithSuCheck("setenforce 1");
-            } else {
-              SuShell.runWithSuCheck("setenforce 0");
-            }
-          }
-
-          @Override
-          protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            if (!result) {
-              // Did not work, so restore actual value
-              setSelinuxEnabled(SELinux.isSELinuxEnforced(), mSelinuxPersistence.isChecked());
-            }
+    private class SwitchSelinuxTask extends SuTask<Boolean> {
+      public SwitchSelinuxTask(Context context) {
+        super(context);
+      }
+      @Override
+      protected void sudoInBackground(Boolean... params) throws SuShell.SuDeniedException {
+        if (params.length != 1) {
+          return;
         }
+        if (params[0]) {
+          SuShell.runWithSuCheck("setenforce 1");
+        } else {
+          SuShell.runWithSuCheck("setenforce 0");
+        }
+      }
+
+      @Override
+      protected void onPostExecute(Boolean result) {
+        super.onPostExecute(result);
+        if (!result) {
+          // Did not work, so restore actual value
+          setSelinuxEnabled(SELinux.isSELinuxEnforced(), mSelinuxPersistence.isChecked());
+        }
+      }
     }
 }
