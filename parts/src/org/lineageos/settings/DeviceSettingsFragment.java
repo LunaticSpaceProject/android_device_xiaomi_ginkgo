@@ -37,8 +37,6 @@ import org.lineageos.settings.SuTask;
 public class DeviceSettingsFragment extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener {
 
-    private static final String TAG = "XiaomiParts";
-
     private static final String PREF_DIRAC = "dirac_pref";
     private static final String PREF_HEADSET = "dirac_headset_pref";
     private static final String PREF_PRESET = "dirac_preset_pref";
