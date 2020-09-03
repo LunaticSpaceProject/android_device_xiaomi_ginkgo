@@ -72,7 +72,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
+        
+        <receiver 
+            android:name="org.lineageos.settings.Startup" 
+            android:enabled="true">
         <service
             android:name=".dirac.DiracTileService"
             android:icon="@drawable/dirac_qs_tile_icon"
