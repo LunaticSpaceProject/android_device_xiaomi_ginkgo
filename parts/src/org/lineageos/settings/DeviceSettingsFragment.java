@@ -130,6 +130,7 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
              default:
                 return false;
         }
+        return true;
     }
 
     private void setDiracEnabled(boolean enabled) {
