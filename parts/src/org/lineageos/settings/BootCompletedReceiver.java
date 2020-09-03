@@ -43,7 +43,6 @@ private static final String PREF_SELINUX_MODE = "selinux_mode";
     private Context mContext;
 
 private static final boolean DEBUG = false;
-    private static final String TAG = "XiaomiParts";
     @Override
     public void onReceive(final Context context, Intent intent) {
         new DiracUtils(context).onBootCompleted();
