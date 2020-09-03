@@ -18,23 +18,35 @@ package org.lineageos.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SELinux;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.SwitchPreference;
 import androidx.preference.ListPreference;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.lineageos.settings.R;
 import org.lineageos.settings.dirac.DiracUtils;
 import org.lineageos.settings.speaker.ClearSpeakerActivity;
+import org.lineageos.settings.SuShell;
+import org.lineageos.settings.SuTask;
 
 public class DeviceSettingsFragment extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener {
+
+    private static final String TAG = "XiaomiParts";
 
     private static final String PREF_DIRAC = "dirac_pref";
     private static final String PREF_HEADSET = "dirac_headset_pref";
     private static final String PREF_PRESET = "dirac_preset_pref";
     private static final String PREF_CLEAR_SPEAKER = "clear_speaker_settings";
+
+    private static final String SELINUX_CATEGORY = "selinux";
+    private static final String PREF_SELINUX_MODE = "selinux_mode";
+    private static final String PREF_SELINUX_PERSISTENCE = "selinux_persistence";
 
     private SwitchPreference mDiracPref;
 
@@ -44,6 +56,9 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
     private Preference mClearSpeakerPref;
 
     private DiracUtils mDiracUtils;
+
+    private SwitchPreference mSelinuxMode;
+    private SwitchPreference mSelinuxPersistence;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -71,6 +86,18 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
             startActivity(intent);
             return true;
         });
+        // SELinux
+        Preference selinuxCategory = findPreference(SELINUX_CATEGORY);
+        mSelinuxMode = (SwitchPreference) findPreference(PREF_SELINUX_MODE);
+        mSelinuxMode.setChecked(SELinux.isSELinuxEnforced());
+        mSelinuxMode.setOnPreferenceChangeListener(this);
+
+        mSelinuxPersistence =
+        (SwitchPreference) findPreference(PREF_SELINUX_PERSISTENCE);
+        mSelinuxPersistence.setOnPreferenceChangeListener(this);
+        mSelinuxPersistence.setChecked(getContext()
+        .getSharedPreferences("selinux_pref", Context.MODE_PRIVATE)
+        .contains(PREF_SELINUX_MODE));
     }
 
     @Override
@@ -86,7 +113,21 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
             case PREF_PRESET:
                 mDiracUtils.setLevel(String.valueOf(newValue));
                 return true;
-            default:
+
+            case PREF_SELINUX_MODE:
+                if (preference == mSelinuxMode) {
+		              boolean enabled = (Boolean) value;
+                  new SwitchSelinuxTask(getActivity()).execute(enabled);
+                  setSelinuxEnabled(enabled, mSelinuxPersistence.isChecked());
+                  return true;
+                } else if (preference == mSelinuxPersistence) {
+                  setSelinuxEnabled(mSelinuxMode.isChecked(), (Boolean) value);
+                  return true;
+                }
+
+                break;
+
+             default:
                 return false;
         }
     }
@@ -95,5 +136,44 @@ public class DeviceSettingsFragment extends PreferenceFragment implements
         mDiracPref.setChecked(enabled);
         mHeadsetPref.setEnabled(enabled);
         mPresetPref.setEnabled(enabled);
+    }
+
+    private void setSelinuxEnabled(boolean status, boolean persistent) {
+          SharedPreferences.Editor editor = getContext()
+              .getSharedPreferences("selinux_pref", Context.MODE_PRIVATE).edit();
+          if (persistent) {
+            editor.putBoolean(PREF_SELINUX_MODE, status);
+          } else {
+            editor.remove(PREF_SELINUX_MODE);
+          }
+          editor.apply();
+          mSelinuxMode.setChecked(status);
+        }
+
+        private class SwitchSelinuxTask extends SuTask<Boolean> {
+          public SwitchSelinuxTask(Context context) {
+            super(context);
+          }
+          @Override
+          protected void sudoInBackground(Boolean... params) throws SuShell.SuDeniedException {
+            if (params.length != 1) {
+              Log.e(TAG, "SwitchSelinuxTask: invalid params count");
+              return;
+            }
+            if (params[0]) {
+              SuShell.runWithSuCheck("setenforce 1");
+            } else {
+              SuShell.runWithSuCheck("setenforce 0");
+            }
+          }
+
+          @Override
+          protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (!result) {
+              // Did not work, so restore actual value
+              setSelinuxEnabled(SELinux.isSELinuxEnforced(), mSelinuxPersistence.isChecked());
+            }
+        }
     }
 }
