@@ -43,7 +43,7 @@ PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
 export SUPERIOR_OFFICIAL=true
 
 # Fingerprint
-BUILD_FINGERPRINT := google/coral/coral:10/QQ3A.200805.001/6578210:user/release-keys
+BUILD_FINGERPRINT := google/coral/coral:11/RP1A.200720.009/6720564:user/release-keys
 
 # Maintainer prop
 PRODUCT_PROPERTY_OVERRIDES += \
