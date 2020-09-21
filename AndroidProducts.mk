@@ -5,9 +5,9 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/superior_ginkgo.mk
+    $(LOCAL_DIR)/rr_ginkgo.mk
 
 COMMON_LUNCH_CHOICES := \
-    superior_ginkgo-user \
-    superior_ginkgo-userdebug \
-    superior_ginkgo-eng
+    rr_ginkgo-user \
+    rr_ginkgo-userdebug \
+    rr_ginkgo-eng

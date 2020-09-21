@@ -23,28 +23,22 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 # Inherit from ginkgo device
 $(call inherit-product, device/xiaomi/ginkgo/device.mk)
 
-# Inherit some common SuperiorOS stuff
+# Inherit some common Resurrection Remix stuff.
 TARGET_BOOT_ANIMATION_RES := 1080
-$(call inherit-product, vendor/superior/config/common.mk)
+TARGET_FACE_UNLOCK_SUPPORTED := true
+RR_BUILDTYPE := Official
+$(call inherit-product, vendor/rr/config/common_full_phone.mk)
 $(call inherit-product, vendor/miuicamera/common/common-vendor.mk)
 
-# Launcher
-TARGET_LAUNCHER := lawnchair
-
 # Device identifier
-PRODUCT_NAME := superior_ginkgo
+PRODUCT_NAME := rr_ginkgo
 PRODUCT_DEVICE := ginkgo
 PRODUCT_BRAND := Xiaomi
 PRODUCT_MODEL := Redmi Note 8
 PRODUCT_MANUFACTURER := Xiaomi
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
 
-#OFFICIAL
-export SUPERIOR_OFFICIAL=true
-
 # Fingerprint
 BUILD_FINGERPRINT := google/coral/coral:11/RP1A.200720.009/6720564:user/release-keys
 
-# Maintainer prop
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.superior.maintainer=MADMAX
+
