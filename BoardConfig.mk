@@ -16,8 +16,8 @@ TARGET_PROVIDES_AUDIO_EXTNS := true
 # Assert
 TARGET_OTA_ASSERT_DEVICE := ginkgo,willow
 
-# Charger
-BOARD_HEALTHD_CUSTOM_CHARGER_RES := $(DEVICE_PATH)/charger/images
+# Display
+TARGET_SCREEN_DENSITY := 440
 
 # DT2W
 TARGET_TAP_TO_WAKE_NODE := "/proc/tp_gesture"

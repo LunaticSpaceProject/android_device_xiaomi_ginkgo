@@ -17,7 +17,6 @@
 # Inherit framework first
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 
 # Inherit from ginkgo device
@@ -26,6 +25,7 @@ $(call inherit-product, device/xiaomi/ginkgo/device.mk)
 # Inherit some common Resurrection Remix stuff.
 TARGET_BOOT_ANIMATION_RES := 1080
 TARGET_FACE_UNLOCK_SUPPORTED := true
+TARGET_INCLUDE_WIFI_EXT := true
 RR_BUILDTYPE := Official
 $(call inherit-product, vendor/rr/config/common_full_phone.mk)
 $(call inherit-product, vendor/miuicamera/common/common-vendor.mk)
